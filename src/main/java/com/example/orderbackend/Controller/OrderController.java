@@ -31,11 +31,11 @@ public class OrderController {
 
     @PostMapping("")
     @Operation(tags = {"Order"})
-    public Mono<ResponseEntity<Order>> createOrder(@RequestBody Order order){
+    public Mono<ResponseEntity<?>> createOrder(@RequestBody Order order){
         return orderService.add(order);
     }
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Order>> updateOrder(@RequestBody Order order,@PathVariable String id){
+    public Mono<ResponseEntity<?>> updateOrder(@RequestBody Order order,@PathVariable String id){
         return orderService.update(id, order);
     }
 

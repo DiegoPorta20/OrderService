@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 public interface IOrderService {
     Flux<Order> getAll();
     Mono<ResponseEntity<Order>> getById(String id);
-    Mono<ResponseEntity<Order>> add(Order order);
-    Mono<ResponseEntity<Order>> update(String id, Order order);
+    Mono<ResponseEntity<?>> add(Order order);
+    Mono<ResponseEntity<?>> update(String id, Order order);
     Mono<Void> delete(String id);
 }

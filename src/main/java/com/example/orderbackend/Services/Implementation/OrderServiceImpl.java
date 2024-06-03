@@ -40,11 +40,11 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Mono<ResponseEntity<Order>> add(Order order) {
+    public Mono<ResponseEntity<?>> add(Order order) {
         return ValidateProductAndCustomer(order)
                 .flatMap(orderValidate -> {
                     if(orderValidate.getStatusCodeValue() == 406)
-                        return Mono.just(new ResponseEntity<>(order,HttpStatus.NOT_ACCEPTABLE));
+                        return Mono.just(new ResponseEntity<>("Some of the products or the customer is not correct", HttpStatus.NOT_ACCEPTABLE));
                     return orderRepository.insert(order)
                             .map(orderSave -> new ResponseEntity<>(orderSave,HttpStatus.ACCEPTED))
                             .defaultIfEmpty(new ResponseEntity<>(order,HttpStatus.NOT_ACCEPTABLE));
@@ -52,11 +52,12 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Mono<ResponseEntity<Order>> update(String id, Order order) {
+    public Mono<ResponseEntity<?>> update(String id, Order order) {
         return ValidateProductAndCustomer(order)
                 .flatMap(orderValidate -> {
-                    if(orderValidate.getStatusCodeValue() == 406)
-                        return Mono.just(new ResponseEntity<>(order,HttpStatus.NOT_ACCEPTABLE));
+                    if(orderValidate.getStatusCodeValue() == 406){
+                        return Mono.just(new ResponseEntity<>("Some of the products or the customer is not correct",HttpStatus.NOT_ACCEPTABLE));
+                    }
                     return orderRepository.findById(id)
                             .flatMap(orderSave -> {
                                 order.setId(id);
@@ -90,8 +91,10 @@ public class OrderServiceImpl implements IOrderService {
                     boolean customerValid = tuple.getT2();
 
                     if (allProductsValid && customerValid) {
+                        System.out.println("All products and customer are valid");
                         return Mono.just(new ResponseEntity<>(order, HttpStatus.ACCEPTED));
                     } else {
+                        System.out.println("Some products or customer are invalid");
                         return Mono.just(new ResponseEntity<>(order, HttpStatus.NOT_ACCEPTABLE));
                     }
                 });
